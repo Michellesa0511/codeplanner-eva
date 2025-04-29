@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodePlanner - Eva Code</title>
+    <style>
+        :root {
+            --rosa: #ff4f81;
+            --roxo: #6a0dad;
+            --preto: #1c1c1c;
+            --cinza: #2e2e2e;
+            --branco: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--preto);
+            color: var(--branco);
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--rosa);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-container {
+            background: var(--cinza);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(255, 79, 129, 0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: #444;
+            color: var(--branco);
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--rosa);
+            color: var(--branco);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .idea-list {
+            margin-top: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .idea-item {
+            background: #333;
+            border-left: 6px solid var(--roxo);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .idea-item strong {
+            color: var(--rosa);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CodePlanner - Criar Ideia de Conteúdo</h1>
+    <div class="form-container">
+        <form id="contentForm">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" required />
+
+            <label for="tipo">Tipo de Conteúdo</label>
+            <select id="tipo">
+                <option value="Reels">Reels</option>
+                <option value="Story">Story</option>
+                <option value="Carrossel">Carrossel</option>
+                <option value="Post Simples">Post Simples</option>
+            </select>
+
+            <label for="categoria">Categoria</label>
+            <input type="text" id="categoria" placeholder="Ex: Dicas, Tendências..." />
+
+            <label for="texto">Texto da Ideia</label>
+            <textarea id="texto" rows="4"></textarea>
+
+            <label for="status">Status</label>
+            <select id="status">
+                <option value="Rascunho">Rascunho</option>
+                <option value="Gravado">Gravado</option>
+                <option value="Publicado">Publicado</option>
+            </select>
+
+            <button type="submit">Salvar Ideia</button>
+        </form>
+    </div>
+
+    <div class="idea-list" id="ideaList"></div>
+
+    <script>
+        const form = document.getElementById('contentForm');
+        const ideaList = document.getElementById('ideaList');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const ideia = {
+                titulo: document.getElementById('titulo').value,
+                tipo: document.getElementById('tipo').value,
+                categoria: document.getElementById('categoria').value,
+                texto: document.getElementById('texto').value,
+                status: document.getElementById('status').value
+            };
+
+            salvarIdeia(ideia);
+            form.reset();
+        });
+
+        function salvarIdeia(ideia) {
+            const ideias = JSON.parse(localStorage.getItem('codeplanner_ideias')) || [];
+            ideias.push(ideia);
+            localStorage.setItem('codeplanner_ideias', JSON.stringify(ideias));
+            renderizarIdeias();
+        }
+
+        function renderizarIdeias() {
+            const ideias = JSON.parse(localStorage.getItem('codeplanner_ideias')) || [];
+            ideaList.innerHTML = '';
+            ideias.forEach(ideia => {
+                const div = document.createElement('div');
+                div.className = 'idea-item';
+                div.innerHTML = `
+          <strong>${ideia.titulo}</strong> (${ideia.tipo} / ${ideia.categoria})<br />
+          <em>Status:</em> ${ideia.status}<br />
+          <p>${ideia.texto}</p>
+        `;
+                ideaList.appendChild(div);
+            });
+        }
+
+        renderizarIdeias();
+    </script>
+</body>
+
+</html>
